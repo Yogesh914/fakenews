@@ -15,30 +15,55 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__, template_folder='.')
 ps = PorterStemmer()
 # Load model and vectorizer
-model_filename = 'model2.pkl'
+classifier = 'rfmodel.pkl'
+clfDTC = 'xgbmodel.pkl'
+clfSVC = 'model2.pkl'
 tfidfvect_filename = 'tfidfvect2.pkl'
-model_path = os.path.join(basedir, model_filename)
+classifier_path = os.path.join(basedir, classifier)
+clfDTC_path = os.path.join(basedir, clfDTC)
+clfSVC_path = os.path.join(basedir, clfSVC)
 tfidfvect_path = os.path.join(basedir, tfidfvect_filename)
 
 
-model = pickle.load(open(model_path, 'rb'))
+PCA = pickle.load(open(classifier_path, 'rb'))
+DecisionTree = pickle.load(open(clfDTC_path, 'rb'))
+SVC = pickle.load(open(clfSVC_path, 'rb'))
 tfidfvect = pickle.load(open(tfidfvect_path, 'rb'))
 
 # Build functionalities
 @app.route('/', methods=['GET'])
 def home():
     return render_template('index.html')
-def predict(text):
+def predict(text, ):
     review = re.sub('[^a-zA-Z]', ' ', text)
     review = review.lower()
     review = review.split()
     review = [ps.stem(word) for word in review if not word in stopwords.words('english')]
     review = ' '.join(review)
     review_vect = tfidfvect.transform([review]).toarray()
-    score = model.decision_function(review_vect)
-    proba = 1 / (1 + np.exp(-score))
-    prediction = 'FAKE' if model.predict(review_vect) == 0 else 'REAL'
-    return prediction, proba[0]
+
+    score1 = PCA.decision_function(review_vect)
+    proba1 = 1 / (1 + np.exp(-score1))
+    prediction1 = PCA.predict(review_vect)
+
+    score2 = DecisionTree.decision_function(review_vect)
+    proba2 = 1 / (1 + np.exp(-score2))
+    prediction2 = DecisionTree.predict(review_vect) 
+
+    score3 = SVC.decision_function(review_vect)
+    proba3 = 1 / (1 + np.exp(-score3))
+    prediction3 = SVC.predict(review_vect)
+
+    final_predict = (prediction1 + prediction2 + prediction3) / 3
+
+    if final_predict < 0.5:
+        prediction = "FAKE"
+    else:
+        prediction = "REAL"
+
+    final_prob = (proba1 + proba2 + proba3) / 3
+
+    return prediction, final_prob[0]
 
 @app.route('/', methods=['POST'])
 def webapp():

@@ -36,10 +36,7 @@ def html_scraper(url):
 
 def add_to_CSV(url, classification):
     if(len(url.split(" ")) != 1):
-        html = requests.get(url).text
-        text = newspaper.fulltext(html)
-
-
+        return
 
     article = newspaper.Article(url=url, language='en')
     article.download()
