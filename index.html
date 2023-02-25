@@ -15,6 +15,42 @@
     .dark .text-gray-900 {
     color: #F9FAFB;
     }
+    
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .toggle-label {
+      display: block;
+      width: 2.5rem;
+      height: 1.5rem;
+      cursor: pointer;
+      background-color: #d1d5db;
+      border-radius: 0.75rem;
+      position: relative;
+      transition: background 0.2s ease-in-out;
+    }
+
+    .toggle-label:before {
+      content: '';
+      position: absolute;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      background-color: white;
+      top: 0.25rem;
+      left: 0.25rem;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    #dark-mode-switch:checked + .toggle-label {
+      background-color: #60a5fa;
+    }
+
+    #dark-mode-switch:checked + .toggle-label:before {
+      transform: translateX(1rem);
+    }
   </style>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,7 +72,7 @@
           <span class="text-gray-900 dark:text-gray-50 text-sm font-medium">Dark Mode</span>
         </div>
     </nav>
-    <div class="container mx-auto mt-10">
+    <div class="w-full">
         <h1 class="text-3xl text-center font-bold mb-8">Check if news is real or fake!</h1>
         <div class="flex flex-col items-center">
             <form action="/" method="POST" class="w-full max-w-lg">
