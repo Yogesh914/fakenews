@@ -41,7 +41,11 @@ def predict(text):
 @app.route('/', methods=['POST'])
 def webapp():
     url = request.form['text']
-    title, text = html_scraper(url)
+    # If the URL doens't work, the text box is replaced with an error message
+    try:
+        title, text = html_scraper(url)
+    except:
+        return render_template('index.html', text = 'ERROR: URL doesn\'t work', result = "", probability = "")
 
     prediction, probability = predict(text)
 
