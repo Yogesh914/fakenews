@@ -8,6 +8,8 @@ import os
 from nltk.stem.porter import PorterStemmer
 from html_scraper import html_scraper
 
+nltk.download('stopwords')
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__, template_folder='.')
