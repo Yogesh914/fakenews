@@ -88,10 +88,13 @@
                 </div>
             </form>
             {% if result %}
-            <div class="mt-12">
+              <div class="mt-12">
                 <p class="text-2xl font-bold text-center">{{ result }}</p>
+                <div class="w-full h-4 bg-gray-300 rounded-full mt-4">
+                    <div class="h-full bg-blue-500 rounded-full" style="width: {{ probability }};"></div>
+                </div>
                 <p class="text-xl text-center mt-4">The news is <span class="{{ probability_class }}">{{ probability }}</span> real</p>
-            </div>
+              </div>
             {% endif %}
         </div>
     </div>
