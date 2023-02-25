@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 import re
 import os
 from nltk.stem.porter import PorterStemmer
+from html_scraper import html_scraper
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -39,7 +40,9 @@ def predict(text):
 
 @app.route('/', methods=['POST'])
 def webapp():
-    text = request.form['text']
+    url = request.form['text']
+    title, text = html_scraper(url)
+
     prediction, probability = predict(text)
 
     probability = f"{probability.max()*100:.2f}%"
