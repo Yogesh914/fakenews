@@ -52,3 +52,4 @@ def api():
     prediction = predict(text)
     return jsonify(prediction=prediction)
 if __name__ == "__main__":
+    app.run()
