@@ -45,7 +45,7 @@ def webapp():
     try:
         text = html_scraper(url)
     except:
-        return render_template('index.html', text = 'ERROR: URL doesn\'t work', result = "", probability = "")
+        return render_template('index.html', text = 'ERROR: URL doesn\'t work', result = 'FAKE', probability = "")
 
     prediction, probability = predict(text)
 
