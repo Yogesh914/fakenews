@@ -3,6 +3,9 @@ import json
 
 # some code from https://newscatcherapi.com/blog/python-web-scraping-libraries-to-mine-news-data
 def html_scraper(url):
+    if(len(url.split(" ")) != 1):
+        return url
+
     article = newspaper.Article(url=url, language='en')
     article.download()
     article.parse()
@@ -17,4 +20,4 @@ def html_scraper(url):
     "summary": str(article.summary)
     }
 
-    return article['title'], article['text']
+    return article['text']
