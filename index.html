@@ -1,68 +1,72 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
- <meta charset="utf-8">
- <meta http-equiv="X-UA-Compatible" content="IE=edge">
- <title>Fake News Prediction</title>
- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-  crossorigin="anonymous"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fake News Prediction</title>
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.16/dist/tailwind.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
-<body>
- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-   <a class="navbar-brand" href="/">FAKE NEWS PREDICTION</a>
-   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-   </button>
-   <div class="nav navbar-nav navbar-right" id="navbarNavAltMarkup">
-    <!-- <div class="navbar-nav">
-     <a class="nav-link" target="_blank" href="https://github.com/fangyiyu/Fake_News_Detection_Flask">Code Source</a>
-    </div>-->
-   </div>
-  </div>
- </nav>
-<br>
- <p style=text-align:center>A fake news prediction web application using Machine Learning algorithms</p>
- <p style=text-align:center>Enter the URL to your article to try it.</p>
- <br>
- <div class='container'>
-  <form action="/" method="POST">
-   <div class="col-three-forth text-center col-md-offset-2">
-    <div class="form-group">
-     <textarea class="form-control jTextarea mt-3" id="jTextarea'" rows="5" name="text"
-      placeholder="Write your text here..." required>{{text}}</textarea>
-<br><br>
-     <button class="btn btn-primary btn-outline btn-md" type="submit" name="predict">Predict</button>
+
+<body class="bg-white">
+    <nav class="bg-white p-6 flex justify-between items-center">
+        <div class="flex items-center flex-shrink-0 text-gray-900 mr-6">
+            <span class="font-semibold text-xl tracking-tight">Fake News Prediction</span>
+        </div>
+        <div class="flex items-center">
+          <div class="relative inline-block w-10 mr-2 align-middle select-none">
+            <input type="checkbox" id="dark-mode-switch" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+            <label for="dark-mode-switch" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+          </div>
+          <span class="text-gray-900 dark:text-gray-50 text-sm font-medium">Dark Mode</span>
+        </div>
+    </nav>
+    <div class="container mx-auto mt-10">
+        <h1 class="text-3xl text-center font-bold mb-8">Check if news is real or fake!</h1>
+        <div class="flex flex-col items-center">
+            <form action="/" method="POST" class="w-full max-w-lg">
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full px-3">
+                        <textarea class="bg-gray-200 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            rows="5" name="text" placeholder="Enter the news here..." required>{{text}}</textarea>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" type="submit"
+                        name="predict">Predict</button>
+                </div>
+            </form>
+            {% if result %}
+            <div class="mt-12">
+                <p class="text-2xl font-bold text-center">{{ result }}</p>
+                <p class="text-xl text-center mt-4">The news is <span class="{{ probability_class }}">{{ probability }}</span> real</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
-   </div>
-  </form>
- </div>
- <br>
-
-
-<p style="text-align:center"><strong>The news is {{ probability }} real </strong></p>
 
 <script>
-     function growTextarea (i,elem) {
-    var elem = $(elem);
-    var resizeTextarea = function( elem ) {
-        var scrollLeft = window.pageXOffset || (document.documentElement || document.body.parentNode || document.body).scrollLeft;
-        var scrollTop  = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;  
-        elem.css('height', 'auto').css('height', elem.prop('scrollHeight') );
-          window.scrollTo(scrollLeft, scrollTop);
-      };
-      elem.on('input', function() {
-        resizeTextarea( $(this) );
-      });
-      resizeTextarea( $(elem) );
+  const toggleSwitch = document.querySelector('#dark-mode-switch');
+  toggleSwitch.addEventListener('change', switchTheme);
+
+  const theme = localStorage.getItem('theme');
+
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+    toggleSwitch.checked = true;
   }
-  
-  $('.jTextarea').each(growTextarea);
+
+  function switchTheme() {
+    if (toggleSwitch.checked) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }
+     
 </script>
 </body>
 </html>
