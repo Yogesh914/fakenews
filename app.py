@@ -7,6 +7,7 @@ import re
 import os
 from nltk.stem.porter import PorterStemmer
 from html_scraper import html_scraper
+import xgboost as xgb
 
 nltk.download('stopwords')
 
