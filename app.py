@@ -15,19 +15,18 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__, template_folder='.')
 ps = PorterStemmer()
 # Load model and vectorizer
-classifier = 'rfmodel.pkl'
-clfDTC = 'xgbmodel.pkl'
-clfSVC = 'model2.pkl'
+Bmodel = 'modelbnb.pkl'
+DTCmodel = 'modelDTC.pkl'
+PCAmodel = 'model2.pkl'
 tfidfvect_filename = 'tfidfvect2.pkl'
-classifier_path = os.path.join(basedir, classifier)
-clfDTC_path = os.path.join(basedir, clfDTC)
-clfSVC_path = os.path.join(basedir, clfSVC)
+Bpath = os.path.join(basedir, Bmodel)
+DTCpath = os.path.join(basedir, DTCmodel)
+PCApath = os.path.join(basedir, PCAmodel)
 tfidfvect_path = os.path.join(basedir, tfidfvect_filename)
 
-
-PCA = pickle.load(open(classifier_path, 'rb'))
-DecisionTree = pickle.load(open(clfDTC_path, 'rb'))
-SVC = pickle.load(open(clfSVC_path, 'rb'))
+B = pickle.load(open(Bpath, 'rb'))
+DCT = pickle.load(open(DTCpath, 'rb'))
+PCA = pickle.load(open(PCApath, 'rb'))
 tfidfvect = pickle.load(open(tfidfvect_path, 'rb'))
 
 # Build functionalities
@@ -42,17 +41,15 @@ def predict(text, ):
     review = ' '.join(review)
     review_vect = tfidfvect.transform([review]).toarray()
 
-    score1 = PCA.decision_function(review_vect)
+    score1 = B.decision_function(review_vect)
     proba1 = 1 / (1 + np.exp(-score1))
-    prediction1 = PCA.predict(review_vect)
+    prediction1 = B.predict(review_vect)
 
-    score2 = DecisionTree.decision_function(review_vect)
-    proba2 = 1 / (1 + np.exp(-score2))
-    prediction2 = DecisionTree.predict(review_vect) 
+    prediction2 = DCT.predict(review_vect) 
 
-    score3 = SVC.decision_function(review_vect)
+    score3 = PCA.decision_function(review_vect)
     proba3 = 1 / (1 + np.exp(-score3))
-    prediction3 = SVC.predict(review_vect)
+    prediction3 = PCA.predict(review_vect)
 
     final_predict = (prediction1 + prediction2 + prediction3) / 3
 
@@ -61,7 +58,7 @@ def predict(text, ):
     else:
         prediction = "REAL"
 
-    final_prob = (proba1 + proba2 + proba3) / 3
+    final_prob = (proba1 + proba3) / 2
 
     return prediction, final_prob[0]
 
