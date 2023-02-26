@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 import nltk
 import pickle
 import numpy as np
@@ -7,7 +7,7 @@ import re
 import os
 from nltk.stem.porter import PorterStemmer
 from html_scraper import html_scraper
-import xgboost as xgb
+import csv
 
 nltk.download('stopwords')
 
@@ -66,7 +66,7 @@ def predict(text, ):
         prediction = "REAL"
 
     final_prob = (proba1 + proba3) / 2
-    
+
     return prediction, final_prob
 
 @app.route('/', methods=['POST'])
@@ -89,5 +89,17 @@ def api():
     text = request.args.get("text")
     prediction = predict(text)
     return jsonify(prediction=prediction)
+
+@app.route('/feedback', methods=['POST'])
+def handle_feedback():
+  feedback = request.json['feedback']
+  text = request.json['text']
+  
+  with open('feedback.csv', mode='a', newline='') as feedback_file:
+    feedback_writer = csv.writer(feedback_file)
+    feedback_writer.writerow([text, int(feedback == 'real')])
+  
+  return redirect('/')
+
 if __name__ == "__main__":
     app.run()
