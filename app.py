@@ -16,6 +16,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__, template_folder='.')
 ps = PorterStemmer()
 # Load model and vectorizer
+rfmodel = 'rfmodel.pkl'
 Bmodel = 'modelbnb.pkl'
 DTCmodel = 'modelDTC.pkl'
 PCAmodel = 'model2.pkl'
@@ -24,12 +25,13 @@ Bpath = os.path.join(basedir, Bmodel)
 DTCpath = os.path.join(basedir, DTCmodel)
 PCApath = os.path.join(basedir, PCAmodel)
 tfidfvect_path = os.path.join(basedir, tfidfvect_filename)
+rfpath = os.path.join(basedir, rfmodel)
 
 B = pickle.load(open(Bpath, 'rb'))
 DCT = pickle.load(open(DTCpath, 'rb'))
 PCA = pickle.load(open(PCApath, 'rb'))
 tfidfvect = pickle.load(open(tfidfvect_path, 'rb'))
-
+rf = pickle.load(open(rfpath, 'rb'))
 # Build functionalities
 @app.route('/', methods=['GET'])
 def home():
@@ -52,7 +54,11 @@ def predict(text, ):
     proba3 = 1 / (1 + np.exp(-score3))
     prediction3 = PCA.predict(review_vect)
 
-    final_predict = (prediction1 + prediction2 + prediction3) / 3
+    score4 = rf.predict_proba(review_vect)
+    proba4 = 1 / (1 + np.exp(-score4))
+    prediction4 = rf.predict(review_vect)
+
+    final_predict = (prediction1 + prediction2 + prediction3 + prediction4) / 4
 
     if final_predict < 0.5:
         prediction = "FAKE"
@@ -60,8 +66,8 @@ def predict(text, ):
         prediction = "REAL"
 
     final_prob = (proba1 + proba3) / 2
-
-    return prediction, final_prob[0]
+    
+    return prediction, final_prob
 
 @app.route('/', methods=['POST'])
 def webapp():
