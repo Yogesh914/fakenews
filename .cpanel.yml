@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/fakennln/public_html/
-    - /bin/cp -R fakenews $DEPLOYPATH
+    - /bin/cp app.py $DEPLOYPATH
